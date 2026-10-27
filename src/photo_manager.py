@@ -39,20 +39,9 @@ def _build_photo(path: Path, cutoff: datetime, folder: str = "") -> Optional[Dic
     }
 
 
-def scan_photo_folders(root_path="photos/", cutoff_date: Optional[datetime] = None) -> List[Dict]:
-    root = Path(root_path)
-    cutoff = cutoff_date or datetime(2026, 8, 10)
-    if not root.exists():
-        root.mkdir(parents=True)
-        (root / "README.txt").write_text(
-            "Create one sub-folder per photo group here, e.g. photos/our_family/,\n"
-            "and drop .jpg/.png files inside.\n")
-        log.warning("Created %s - add photo sub-folders to it.", root)
-        return []
-    folders = []
-    for sub in sorted(p for p in root.iterdir() if p.is_dir() and not p.name.startswith(".")):
-        files = sorted(f for f in sub.iterdir() if f.suffix.lower() in IMAGE_EXTS)
-        photos = [p for p in (_build_photo(f, cutoff, sub.name) for f in files) if p]
-        folders.append({"name": sub.name, "path": str(sub),
-                        "photo_count": len(photos), "photos": photos})
-    return folders
+def scan_folder(path, cutoff: datetime) -> Dict:
+    """Scan one folder (non-recursive) into {name, path, photo_count, photos}."""
+    path = Path(path)
+    files = sorted(f for f in path.iterdir() if f.suffix.lower() in IMAGE_EXTS) if path.is_dir() else []
+    photos = [p for p in (_build_photo(f, cutoff, path.name) for f in files) if p]
+    return {"name": path.name, "path": str(path), "photo_count": len(photos), "photos": photos}

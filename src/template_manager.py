@@ -6,10 +6,10 @@ from typing import Dict, List, Optional
 
 import pygame
 
+import paths
 from utils import (crop_image_to_fit, parse_color, render_text_on_surface)
 
 log = logging.getLogger("scrapbook")
-ROOT = Path(__file__).resolve().parent.parent
 RECT_KEYS = ("x", "y", "width", "height")
 
 
@@ -38,7 +38,7 @@ def validate_template(t) -> bool:
         return False
 
 
-def load_templates(template_dir="templates/") -> List[Dict]:
+def load_templates(template_dir) -> List[Dict]:
     out = []
     for f in sorted(Path(template_dir).glob("*.json")):
         try:
@@ -52,6 +52,16 @@ def load_templates(template_dir="templates/") -> List[Dict]:
         else:
             log.warning("Skipping invalid template %s", f.name)
     return out
+
+
+def load_all_templates() -> List[Dict]:
+    """Bundled templates plus the user's own; a user template replaces a bundled one with the same id."""
+    merged = {}
+    for source, d in (("bundled", paths.resource_path("templates")), ("user", paths.user_templates_dir())):
+        for t in load_templates(d):
+            t["_source"] = source
+            merged[t["id"]] = t
+    return sorted(merged.values(), key=lambda t: t["name"].lower())
 
 
 def template_matches(t: Dict, names) -> bool:
@@ -101,7 +111,7 @@ def render_template(template: Dict, photo_paths, caption_text: Optional[str],
     bg = template.get("background_image")
     if bg:
         try:
-            canvas.blit(crop_image_to_fit(ROOT / bg, cw, ch), (0, 0))
+            canvas.blit(crop_image_to_fit(paths.resource_path(bg), cw, ch), (0, 0))
         except Exception as e:
             log.warning("Background image failed: %s", e)
 

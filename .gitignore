@@ -1,6 +1,9 @@
 .venv/
+.venv-build/
 __pycache__/
-config.json
+build/
+dist/
 .env
+config.json
 photos/*
 !photos/.gitkeep
