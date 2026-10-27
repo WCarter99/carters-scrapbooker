@@ -5,7 +5,7 @@ import pygame
 import pygame_gui
 
 import config_manager as cm
-import paths
+import theme
 import template_manager as tm
 from library import Library
 
@@ -30,8 +30,7 @@ class App:
         self.running = True
 
     def _new_manager(self):
-        theme = paths.resource_path("assets", "theme.json")
-        return pygame_gui.UIManager(self.screen.get_size(), str(theme) if theme.exists() else None)
+        return pygame_gui.UIManager(self.screen.get_size(), theme.build_theme())
 
     def register(self, name, screen):
         self.screens[name] = screen

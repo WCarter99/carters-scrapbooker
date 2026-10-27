@@ -1,0 +1,64 @@
+Bundled fonts: Noto Serif and Noto Sans, Copyright The Noto Project Authors,
+licensed under the SIL Open Font License, Version 1.1 (https://openfontlicense.org).
+The full upstream copyright notice follows.
+
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Noto
+Upstream-Contact: https://github.com/googlei18n/noto-fonts/issues
+ http://groups.google.com/group/noto-font
+Source: https://github.com/googlei18n/noto-fonts
+
+Files: *
+Copyright:
+  2010,2012-2020, Google Inc.
+  2015-2020, Google LLC.
+License-Grant:
+ This Font Software is licensed under the SIL Open Font License,
+ Version 1.1.
+License: OFL-1.1
+
+Files:
+ debian/*
+Copyright:
+  2013-2020, Jonas Smedegaard <dr@jones.dk>
+  2020, Purism, SPC
+  2013, Vasudev Kamath <kamathvasudev@gmail.com>
+License-Grant:
+ This program is free software;
+ you can redistribute it and/or modify it
+ under the terms of the GNU General Public License
+ as published by the Free Software Foundation;
+ either version 3, or (at your option) any later version.
+License: GPL-3+
+
+Files:
+ debian/NotoMono/NotoMono-Regular.ttf
+Copyright:
+  2007, Google Inc.
+License-Grant:
+ This Font Software is licensed under the SIL Open Font License,
+ Version 1.1.
+License: OFL-1.1
+
+License: OFL-1.1
+ PREAMBLE
+ .
+ The goals of the Open Font License (OFL) are to stimulate
+ worldwide development of collaborative font projects,
+ to support the font creation efforts
+ of academic and linguistic communities,
+ and to provide a free and open framework
+ in which fonts may be shared and improved
+ in partnership with others.
+ .
+ The OFL allows the licensed fonts to be used, studied,
+ modified and redistributed freely
+ as long as they are not sold by themselves.
+ The fonts, including any derivative works,
+ can be bundled, embedded,
+ redistributed and/or sold with any software
+ provided that any reserved names are not used
+ by derivative works.
+ The fonts and derivatives, however,
+ cannot be released under any other type of license.
+ The requirement for fonts to remain under this license

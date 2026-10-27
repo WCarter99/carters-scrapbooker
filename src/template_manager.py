@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 
 import pygame
 
+import fonts
 import paths
 from utils import (crop_image_to_fit, parse_color, render_text_on_surface)
 
@@ -125,7 +126,7 @@ def render_template(template: Dict, photo_paths, caption_text: Optional[str],
     pygame.font.init()
     for zone in template.get("text_zones", []):
         size = int(zone.get("font_size", env.get("FONT_SIZE", 64)))
-        font = pygame.font.SysFont(zone.get("font_family", env.get("FONT_FAMILY", "serif")), size)
+        font = fonts.get_font(zone.get("font_family", env.get("FONT_FAMILY", fonts.DEFAULT_FAMILY)), size)
         text = render_text_on_surface(
             caption_text, font,
             zone.get("text_color", env.get("TEXT_COLOR", "white")),

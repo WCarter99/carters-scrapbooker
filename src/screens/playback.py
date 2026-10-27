@@ -1,6 +1,7 @@
 """Slideshow playback."""
 import pygame
 
+import fonts
 import template_manager as tm
 import config_manager as cm
 from playback import MULTI_LABELS, MULTI_MODES, PhotoPool, build_slide
@@ -24,6 +25,9 @@ class PlaybackScreen(Screen):
         self.mode = mode
         self.folders = app.library.active_folders()
         self.templates = app.enabled_templates()
+        self.bail = not self.folders  # nothing to show (e.g. still rescanning): return to the menu
+        if self.bail:
+            return
         self.env = cm.text_env(cfg)
         cfg["playback_mode"] = "random_all" if mode == "random" else "rotating_folders"
         cfg["last_session"] = {"folders_used": [f["name"] for f in self.folders], "photos_shown": 0}
@@ -31,14 +35,16 @@ class PlaybackScreen(Screen):
         if cfg["fullscreen"] != app.fullscreen:
             app.set_fullscreen(cfg["fullscreen"])
         pygame.mouse.set_visible(False)
-        self.small = pygame.font.SysFont(cfg["font_family"], 28)
-        self.big = pygame.font.SysFont(cfg["font_family"], 72, bold=True)
+        self.small = fonts.get_font("Noto Sans", 28)
+        self.big = fonts.get_font("Noto Sans", 72, True)
         self.shown, self.paused, self.elapsed = 0, False, 0.0
         self.flash, self.flash_t = HINT, 6.0
         self.cache = {}
         self.restart()
 
     def exit(self):
+        if self.bail:
+            return
         self.app.cfg["last_session"]["photos_shown"] = self.shown
         self.app.save()
         pygame.mouse.set_visible(True)
@@ -79,7 +85,7 @@ class PlaybackScreen(Screen):
 
     # ---- loop hooks --------------------------------------------------------
     def handle_event(self, e):
-        if e.type != pygame.KEYDOWN or e.key not in KEYS:
+        if self.bail or e.type != pygame.KEYDOWN or e.key not in KEYS:
             return
         act, cfg = KEYS[e.key], self.app.cfg
         lo, hi = cfg["min_speed"], cfg["max_speed"]
@@ -104,6 +110,9 @@ class PlaybackScreen(Screen):
             del self.history[self.idx + 1:]  # drop unseen future slides so the change applies now
 
     def update(self, dt):
+        if self.bail:
+            self.app.goto("menu")
+            return
         if not self.paused:
             self.elapsed += dt
             if self.elapsed >= self.app.cfg["speed"]:
@@ -113,6 +122,8 @@ class PlaybackScreen(Screen):
 
     def draw(self, screen):
         screen.fill((0, 0, 0))
+        if self.bail:
+            return
         img = self.scaled(self.history[self.idx])
         sw, sh = screen.get_size()
         screen.blit(img, ((sw - img.get_width()) // 2, (sh - img.get_height()) // 2))

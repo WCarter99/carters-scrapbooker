@@ -21,7 +21,7 @@ DEFAULTS = {
     "max_speed": 30.0,
     "enabled_templates": None,            # None = all templates
     "source_folders": [],                 # [{"path": str, "enabled": bool}]
-    "font_family": "serif",
+    "font_family": "Noto Serif",
     "font_size": 64,
     "text_color": "white",
     "text_bg_color": "rgba(0, 0, 0, 0.5)",
