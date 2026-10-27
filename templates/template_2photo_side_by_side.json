@@ -1,0 +1,36 @@
+{
+  "id": "2photo_side_by_side",
+  "name": "2-Photo Side by Side",
+  "description": "Two photos next to each other",
+  "background_color": "#f5f5dc",
+  "background_image": null,
+  "canvas_width": 1920,
+  "canvas_height": 1080,
+  "photo_zones": [
+    {
+      "id": "photo_1",
+      "x": 40,
+      "y": 40,
+      "width": 920,
+      "height": 1000,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        0.7,
+        1.4
+      ]
+    },
+    {
+      "id": "photo_2",
+      "x": 980,
+      "y": 40,
+      "width": 900,
+      "height": 1000,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        0.7,
+        1.4
+      ]
+    }
+  ],
+  "text_zones": []
+}

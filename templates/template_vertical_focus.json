@@ -1,0 +1,36 @@
+{
+  "id": "vertical_focus",
+  "name": "Vertical Focus",
+  "description": "Full-height photo, text overlay",
+  "background_color": "#2b2b2b",
+  "background_image": null,
+  "canvas_width": 1920,
+  "canvas_height": 1080,
+  "photo_zones": [
+    {
+      "id": "photo_1",
+      "x": 360,
+      "y": 0,
+      "width": 1200,
+      "height": 1080,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        1.0,
+        1.4
+      ]
+    }
+  ],
+  "text_zones": [
+    {
+      "id": "text_1",
+      "x": 360,
+      "y": 900,
+      "width": 1200,
+      "height": 140,
+      "background_color": "rgba(0, 0, 0, 0.5)",
+      "padding": 20,
+      "alignment": "center",
+      "vertical_align": "center"
+    }
+  ]
+}

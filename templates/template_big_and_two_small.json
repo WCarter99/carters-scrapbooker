@@ -1,0 +1,48 @@
+{
+  "id": "big_and_two_small",
+  "name": "Big and Two Small",
+  "description": "One large photo with two smaller ones stacked beside it",
+  "background_color": "#2b2b2b",
+  "background_image": null,
+  "canvas_width": 1920,
+  "canvas_height": 1080,
+  "photo_zones": [
+    {
+      "id": "photo_1",
+      "x": 40,
+      "y": 40,
+      "width": 1180,
+      "height": 1000,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        0.9,
+        1.5
+      ]
+    },
+    {
+      "id": "photo_2",
+      "x": 1240,
+      "y": 40,
+      "width": 640,
+      "height": 490,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        1.0,
+        1.9
+      ]
+    },
+    {
+      "id": "photo_3",
+      "x": 1240,
+      "y": 550,
+      "width": 640,
+      "height": 490,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        1.0,
+        1.9
+      ]
+    }
+  ],
+  "text_zones": []
+}

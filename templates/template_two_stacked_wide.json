@@ -1,0 +1,36 @@
+{
+  "id": "two_stacked_wide",
+  "name": "Two Stacked Wide",
+  "description": "Two landscape photos stacked",
+  "background_color": "#f5f5dc",
+  "background_image": null,
+  "canvas_width": 1920,
+  "canvas_height": 1080,
+  "photo_zones": [
+    {
+      "id": "photo_1",
+      "x": 260,
+      "y": 30,
+      "width": 1400,
+      "height": 500,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        2.2,
+        3.5
+      ]
+    },
+    {
+      "id": "photo_2",
+      "x": 260,
+      "y": 550,
+      "width": 1400,
+      "height": 500,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        2.2,
+        3.5
+      ]
+    }
+  ],
+  "text_zones": []
+}

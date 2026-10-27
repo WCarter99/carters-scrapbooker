@@ -1,0 +1,38 @@
+{
+  "id": "polaroid",
+  "name": "Polaroid",
+  "description": "One photo in a white polaroid-style frame with caption",
+  "background_color": "#8b6f47",
+  "background_image": null,
+  "canvas_width": 1920,
+  "canvas_height": 1080,
+  "photo_zones": [
+    {
+      "id": "photo_1",
+      "x": 510,
+      "y": 60,
+      "width": 900,
+      "height": 800,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        0.9,
+        1.5
+      ]
+    }
+  ],
+  "text_zones": [
+    {
+      "id": "text_1",
+      "x": 510,
+      "y": 860,
+      "width": 900,
+      "height": 160,
+      "background_color": "rgba(255, 255, 255, 1)",
+      "padding": 20,
+      "alignment": "center",
+      "vertical_align": "center",
+      "text_color": "#333333",
+      "font_size": 72
+    }
+  ]
+}

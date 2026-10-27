@@ -1,0 +1,36 @@
+{
+  "id": "full_bleed",
+  "name": "Full Bleed",
+  "description": "Photo fills the whole screen, caption over the bottom",
+  "background_color": "#000000",
+  "background_image": null,
+  "canvas_width": 1920,
+  "canvas_height": 1080,
+  "photo_zones": [
+    {
+      "id": "photo_1",
+      "x": 0,
+      "y": 0,
+      "width": 1920,
+      "height": 1080,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        1.5,
+        1.9
+      ]
+    }
+  ],
+  "text_zones": [
+    {
+      "id": "text_1",
+      "x": 0,
+      "y": 940,
+      "width": 1920,
+      "height": 140,
+      "background_color": "rgba(0, 0, 0, 0.5)",
+      "padding": 20,
+      "alignment": "center",
+      "vertical_align": "center"
+    }
+  ]
+}

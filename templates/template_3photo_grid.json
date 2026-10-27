@@ -1,0 +1,48 @@
+{
+  "id": "3photo_grid",
+  "name": "3-Photo Grid",
+  "description": "Three portrait photos in a row",
+  "background_color": "#f5f5dc",
+  "background_image": null,
+  "canvas_width": 1920,
+  "canvas_height": 1080,
+  "photo_zones": [
+    {
+      "id": "photo_1",
+      "x": 40,
+      "y": 60,
+      "width": 600,
+      "height": 960,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        0.6,
+        1.0
+      ]
+    },
+    {
+      "id": "photo_2",
+      "x": 660,
+      "y": 60,
+      "width": 600,
+      "height": 960,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        0.6,
+        1.0
+      ]
+    },
+    {
+      "id": "photo_3",
+      "x": 1280,
+      "y": 60,
+      "width": 600,
+      "height": 960,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        0.6,
+        1.0
+      ]
+    }
+  ],
+  "text_zones": []
+}

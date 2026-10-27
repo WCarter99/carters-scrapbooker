@@ -1,0 +1,60 @@
+{
+  "id": "4photo_grid",
+  "name": "4-Photo Grid",
+  "description": "2x2 grid of photos",
+  "background_color": "#f5f5dc",
+  "background_image": null,
+  "canvas_width": 1920,
+  "canvas_height": 1080,
+  "photo_zones": [
+    {
+      "id": "photo_1",
+      "x": 40,
+      "y": 40,
+      "width": 920,
+      "height": 500,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        1.2,
+        2.0
+      ]
+    },
+    {
+      "id": "photo_2",
+      "x": 980,
+      "y": 40,
+      "width": 900,
+      "height": 500,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        1.2,
+        2.0
+      ]
+    },
+    {
+      "id": "photo_3",
+      "x": 40,
+      "y": 560,
+      "width": 920,
+      "height": 480,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        1.2,
+        2.0
+      ]
+    },
+    {
+      "id": "photo_4",
+      "x": 980,
+      "y": 560,
+      "width": 900,
+      "height": 480,
+      "object_fit": "crop_center",
+      "aspect_ratio_range": [
+        1.2,
+        2.0
+      ]
+    }
+  ],
+  "text_zones": []
+}

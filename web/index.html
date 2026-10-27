@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scrapbook Template Designer</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif;display:flex;height:100vh;background:#222;color:#eee}
+#side{width:320px;padding:12px;overflow:auto;background:#2e2e2e}#main{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:12px}
+label{display:block;margin:8px 0 2px;font-size:12px;color:#aaa}input,select,button,textarea{width:100%;padding:5px;background:#3a3a3a;color:#eee;border:1px solid #555;border-radius:4px}
+input[type=color]{padding:0;height:28px}button{cursor:pointer;margin-top:6px}button:hover{background:#4a4a4a}
+.row{display:flex;gap:6px}.row>*{flex:1}h3{margin:14px 0 4px;border-bottom:1px solid #555;padding-bottom:3px}
+#stage{position:relative;overflow:hidden;box-shadow:0 0 20px #000;background-size:cover}
+.zone{position:absolute;border:2px dashed;cursor:move;overflow:hidden;display:flex}
+.zone.photo{border-color:#4af;background:rgba(70,170,255,.15) center/cover}.zone.text{border-color:#fa4}
+.zone.sel{border-style:solid;box-shadow:0 0 0 2px #fff}.zone .lbl{position:absolute;top:0;left:0;background:#000a;font-size:11px;padding:1px 4px;pointer-events:none;z-index:2}
+.h{position:absolute;width:12px;height:12px;background:#fff;border:1px solid #000;z-index:3}
+.h.nw{left:-1px;top:-1px;cursor:nwse-resize}.h.ne{right:-1px;top:-1px;cursor:nesw-resize}.h.sw{left:-1px;bottom:-1px;cursor:nesw-resize}.h.se{right:-1px;bottom:-1px;cursor:nwse-resize}
+.h.n{left:50%;top:-1px;cursor:ns-resize}.h.s{left:50%;bottom:-1px;cursor:ns-resize}.h.w{left:-1px;top:50%;cursor:ew-resize}.h.e{right:-1px;top:50%;cursor:ew-resize}
+#msg{margin-top:8px;color:#8f8}
+</style></head><body>
+<div id="side">
+<h3>Template</h3>
+<label>Load existing</label><div class="row"><select id="existing"></select><button id="del" style="max-width:60px">Delete</button></div>
+<button id="newbtn">New blank template</button>
+<label>ID (saved as template_&lt;id&gt;.json)</label><input id="id">
+<label>Name</label><input id="name"><label>Description</label><input id="desc">
+<div class="row"><div><label>Canvas W</label><input id="cw" type="number"></div><div><label>Canvas H</label><input id="ch" type="number"></div></div>
+<label>Background colour</label><input id="bg" type="color">
+<h3>Zones</h3>
+<div class="row"><button id="addp">+ Photo</button><button id="addt">+ Text</button><button id="rmz">Remove</button></div>
+<div id="zoneprops"><p style="color:#888">Click a zone to edit.</p></div>
+<h3>Preview</h3>
+<label>Sample photo</label><input id="sample" type="file" accept="image/*">
+<label>Sample caption</label><input id="cap" value="2015">
+<h3>Save</h3><button id="save">Save template</button><div id="msg"></div>
+</div>
+<div id="main"><div id="stage"></div></div>
+<script>
+const $=id=>document.getElementById(id);
+let T=blank(), sel=null, sample=null, scale=0.5;
+function blank(){return{id:"",name:"",description:"",background_color:"#f5f5dc",background_image:null,canvas_width:1920,canvas_height:1080,
+ photo_zones:[{id:"photo_1",x:50,y:50,width:850,height:980,object_fit:"crop_center",aspect_ratio_range:[0.7,1.3]}],
+ text_zones:[{id:"text_1",x:950,y:200,width:900,height:650,background_color:"rgba(255, 255, 255, 0.9)",text_color:"#333333",padding:20,alignment:"center",vertical_align:"center"}]}}
+function zones(){return[...T.photo_zones.map(z=>({z,k:"photo"})),...T.text_zones.map(z=>({z,k:"text"}))]}
+function msg(t,bad){$("msg").textContent=t;$("msg").style.color=bad?"#f88":"#8f8"}
+
+function hexToRgba(s){ // for colour pickers
+ const m=/rgba?\(([^)]+)\)/.exec(s); if(m){const p=m[1].split(",").map(x=>parseFloat(x));return{hex:"#"+p.slice(0,3).map(v=>Math.round(v).toString(16).padStart(2,"0")).join(""),a:p[3]??1}}
+ return{hex:/^#[0-9a-f]{6}$/i.test(s)?s:"#ffffff",a:1}}
+function toRgba(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16}, ${n>>8&255}, ${n&255}, ${a})`}
+
+function render(){
+ const st=$("stage"); scale=Math.min((innerWidth-380)/T.canvas_width,(innerHeight-40)/T.canvas_height);
+ st.style.width=T.canvas_width*scale+"px";st.style.height=T.canvas_height*scale+"px";st.style.background=T.background_color;
+ st.innerHTML="";
+ zones().forEach(({z,k})=>{
+  const d=document.createElement("div");d.className="zone "+k+(sel===z?" sel":"");
+  Object.assign(d.style,{left:z.x*scale+"px",top:z.y*scale+"px",width:z.width*scale+"px",height:z.height*scale+"px"});
+  if(k=="photo"&&sample)d.style.backgroundImage=`url(${sample})`;
+  if(k=="text"){d.style.background=z.background_color;d.style.color=z.text_color||"#fff";d.style.padding=z.padding*scale+"px";
+   d.style.fontSize=(z.font_size||64)*scale+"px";d.style.fontFamily="serif";
+   d.style.textAlign=z.alignment;d.style.alignItems={top:"flex-start",center:"center",bottom:"flex-end"}[z.vertical_align];
+   d.style.justifyContent="center";const s=document.createElement("span");s.style.width="100%";s.textContent=$("cap").value;d.appendChild(s)}
+  const l=document.createElement("div");l.className="lbl";l.textContent=z.id;d.appendChild(l);
+  d.onpointerdown=e=>{if(e.target.classList.contains("h"))return;select(z);drag(e,z,"move")};
+  if(sel===z)["nw","ne","sw","se","n","s","w","e"].forEach(h=>{const x=document.createElement("div");x.className="h "+h;x.onpointerdown=e=>{e.stopPropagation();drag(e,z,h)};d.appendChild(x)});
+  st.appendChild(d)})
+}
+function drag(e,z,mode){
+ e.preventDefault();const sx=e.clientX,sy=e.clientY,o={...z};
+ const mv=ev=>{const dx=Math.round((ev.clientX-sx)/scale),dy=Math.round((ev.clientY-sy)/scale);
+  if(mode=="move"){z.x=o.x+dx;z.y=o.y+dy}
+  else{if(mode.includes("e"))z.width=Math.max(40,o.width+dx);if(mode.includes("s"))z.height=Math.max(40,o.height+dy);
+   if(mode.includes("w")){const w=Math.max(40,o.width-dx);z.x=o.x+o.width-w;z.width=w}
+   if(mode.includes("n")){const h=Math.max(40,o.height-dy);z.y=o.y+o.height-h;z.height=h}}
+  render();props(true)};
+ const up=()=>{removeEventListener("pointermove",mv);removeEventListener("pointerup",up)};
+ addEventListener("pointermove",mv);addEventListener("pointerup",up)}
+
+function select(z){if(sel!==z){sel=z;render();props()}}
+function field(label,key,type="number",extra=""){const v=sel[key]??"";return `<label>${label}</label><input data-k="${key}" type="${type}" value="${v}" ${extra}>`}
+function props(keepFocus){
+ const p=$("zoneprops");if(!sel){p.innerHTML='<p style="color:#888">Click a zone to edit.</p>';return}
+ if(keepFocus&&p.contains(document.activeElement)&&document.activeElement.tagName=="INPUT")return refreshNums();
+ const photo=T.photo_zones.includes(sel);
+ let h=`<div class="row"><div>${field("X","x")}</div><div>${field("Y","y")}</div></div><div class="row"><div>${field("Width","width")}</div><div>${field("Height","height")}</div></div>`;
+ if(photo){const r=sel.aspect_ratio_range;h+=`<div class="row"><div><label>Aspect min</label><input data-r="0" type="number" step="0.05" value="${r[0]}"></div><div><label>Aspect max</label><input data-r="1" type="number" step="0.05" value="${r[1]}"></div></div>`}
+ else{const bgc=hexToRgba(sel.background_color);
+  h+=field("Padding","padding")+field("Font size","font_size","number")+`<label>Text colour</label><input data-k="text_color" type="color" value="${hexToRgba(sel.text_color||"#ffffff").hex}">
+  <div class="row"><div><label>Box colour</label><input id="bgc" type="color" value="${bgc.hex}"></div><div><label>Box opacity</label><input id="bga" type="number" step="0.1" min="0" max="1" value="${bgc.a}"></div></div>
+  <label>Align</label><select data-k="alignment">${["left","center","right"].map(o=>`<option ${sel.alignment==o?"selected":""}>${o}</option>`).join("")}</select>
+  <label>Vertical align</label><select data-k="vertical_align">${["top","center","bottom"].map(o=>`<option ${sel.vertical_align==o?"selected":""}>${o}</option>`).join("")}</select>`}
+ p.innerHTML=h;
+ p.querySelectorAll("[data-k]").forEach(i=>i.oninput=()=>{sel[i.dataset.k]=(i.type=="number"?(i.value===""?undefined:+i.value):i.value);render()});
+ p.querySelectorAll("[data-r]").forEach(i=>i.oninput=()=>{sel.aspect_ratio_range[+i.dataset.r]=+i.value});
+ const f=()=>{sel.background_color=toRgba($("bgc").value,$("bga").value);render()};
+ if($("bgc")){$("bgc").oninput=f;$("bga").oninput=f}}
+function refreshNums(){["x","y","width","height"].forEach(k=>{const i=$("zoneprops").querySelector(`[data-k=${k}]`);if(i&&i!==document.activeElement)i.value=sel[k]})}
+
+function load(t){T=t;sel=null;["id","name"].forEach(k=>$(k).value=T[k]||"");$("desc").value=T.description||"";
+ $("cw").value=T.canvas_width;$("ch").value=T.canvas_height;$("bg").value=hexToRgba(T.background_color).hex;render();props()}
+["id","name"].forEach(k=>$(k).oninput=()=>T[k]=$(k).value);$("desc").oninput=()=>T.description=$("desc").value;
+$("bg").oninput=()=>{T.background_color=$("bg").value;render()};
+$("cw").oninput=()=>{T.canvas_width=+$("cw").value||1920;render()};$("ch").oninput=()=>{T.canvas_height=+$("ch").value||1080;render()};
+$("cap").oninput=render;addEventListener("resize",render);
+$("addp").onclick=()=>{const z={id:"photo_"+(T.photo_zones.length+1),x:100,y:100,width:500,height:600,object_fit:"crop_center",aspect_ratio_range:[0.6,1.5]};T.photo_zones.push(z);select(z)};
+$("addt").onclick=()=>{const z={id:"text_"+(T.text_zones.length+1),x:100,y:800,width:800,height:200,background_color:"rgba(0, 0, 0, 0.5)",text_color:"#ffffff",padding:20,alignment:"center",vertical_align:"center"};T.text_zones.push(z);select(z)};
+$("rmz").onclick=()=>{if(!sel)return;if(T.photo_zones.includes(sel)&&T.photo_zones.length==1)return msg("Need at least one photo zone",1);
+ T.photo_zones=T.photo_zones.filter(z=>z!==sel);T.text_zones=T.text_zones.filter(z=>z!==sel);sel=null;render();props()};
+$("sample").onchange=async()=>{const f=$("sample").files[0];if(!f)return;const fd=new FormData();fd.append("photo",f);
+ const r=await fetch("/api/upload_sample",{method:"POST",body:fd});const j=await r.json();if(j.url){sample=j.url;render()}else msg(j.error,1)};
+$("newbtn").onclick=()=>load(blank());
+async function refreshList(){const l=await (await fetch("/api/templates")).json();$("existing").innerHTML='<option value="">-- choose --</option>'+l.map(t=>`<option value="${t.id}">${t.name}</option>`).join("")}
+$("existing").onchange=async()=>{if(!$("existing").value)return;load(await (await fetch("/api/template/"+$("existing").value)).json())};
+$("del").onclick=async()=>{const id=$("existing").value;if(!id||!confirm("Delete template "+id+"?"))return;await fetch("/api/template/"+id,{method:"DELETE"});msg("Deleted "+id);refreshList()};
+$("save").onclick=async()=>{if(!T.id)return msg("Enter a template ID",1);if(!T.name)T.name=T.id;
+ const r=await fetch("/api/save_template",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(T)});const j=await r.json();
+ if(j.ok){msg("Saved to "+j.file+". Restart the slideshow to use it.");refreshList()}else msg(j.error,1)};
+load(T);refreshList();
+</script></body></html>
