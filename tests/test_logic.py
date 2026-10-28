@@ -101,3 +101,19 @@ def test_config_migrates_legacy_keys_and_bad_cutoff(tmp_path):
     p.write_text(json.dumps({"selected_folders": ["x"], "caption_cutoff_date": "garbage"}))
     cfg = cm.load_config(p)
     assert "selected_folders" not in cfg and cfg["caption_cutoff_date"] == "2026-08-10"
+
+
+def test_scan_cache_skips_unchanged_files(tmp_path, monkeypatch):
+    from datetime import datetime
+
+    from PIL import Image
+
+    import photo_manager as pm
+    for i in range(3):
+        Image.new("RGB", (40, 20)).save(tmp_path / f"{i}.jpg")
+    cache, cutoff = {}, datetime(2026, 1, 1)
+    first = pm.scan_folder(tmp_path, cutoff, cache)
+    assert first["photo_count"] == 3 and len(cache) == 3 and first["photos"][0]["aspect_ratio"] == 2.0
+    monkeypatch.setattr(pm, "get_aspect_ratio", lambda p: (_ for _ in ()).throw(AssertionError("re-read")))
+    again = pm.scan_folder(tmp_path, cutoff, cache)
+    assert again["photo_count"] == 3

@@ -2,6 +2,7 @@
 import logging
 
 from app import App
+from screens.designer import DesignerScreen
 from screens.menu import MenuScreen
 from screens.playback import PlaybackScreen
 from screens.settings import SettingsScreen
@@ -14,7 +15,8 @@ def main():
     app = App()
     app.register("menu", MenuScreen(app))
     for name, cls in (("playback", PlaybackScreen), ("sources", SourcesScreen),
-                      ("templates", TemplatesScreen), ("settings", SettingsScreen)):
+                      ("templates", TemplatesScreen), ("settings", SettingsScreen),
+                      ("designer", DesignerScreen)):
         app.register(name, cls(app))
     app.run("menu")
 

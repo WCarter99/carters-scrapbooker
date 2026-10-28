@@ -3,21 +3,18 @@
 Plans for Carter's Scrapbooker. Nothing here is promised or scheduled, and the order may change. Ideas and feedback are welcome (see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 ## Where it is today
-- Pygame slideshow with scrapbook-style templates
-- Browser-based template designer (Flask)
-- Setup through a Python virtual environment, with options set in `.env` and `config.json`
-- Photos are read from sub-folders of the `photos/` directory
+- Pygame app with an in-window menu: photo folder picker, settings, template picker and a template designer
+- Scrapbook-style templates; settings, folders and your own templates saved in the OS user config directory
+- Fonts and default templates bundled; `python build.py` makes a standalone executable (no Python needed to run it)
 
-## Next: self-contained app
-Goal: a single executable anyone can download and run on any major OS (Windows, macOS, Linux), with no Python install, virtual environment, or file editing.
-
-- [ ] **Main menu screen:** move options that are currently set before launch (via `.env` and the command line) into an in-app menu
-- [ ] **Settings menu:** configure speed, playback mode, enabled templates, fonts, colours, caption cutoff date, and fullscreen from inside the app
-- [ ] **Photo source picker:** choose any folders on disk to pull photos from, instead of relying on a bundled `photos/` folder
-- [ ] **Persistent user config:** store settings and chosen folders in the OS-appropriate user config directory
-- [ ] **Template designer inside pygame:** replace the Flask/browser designer so the app has no web server dependency
-- [ ] **Packaging:** build executables for Windows, macOS and Linux (e.g. PyInstaller), ideally via automated releases on GitHub
-- [ ] **Bundled assets:** ship default templates and fonts inside the executable
+## Next: polish the self-contained app
+- [x] **Main menu, settings, photo source picker, persistent config**
+- [x] **Template designer inside pygame** (no web server)
+- [x] **Bundled assets:** default templates and fonts ship inside the executable
+- [x] **Packaging:** `build.py` (PyInstaller) builds for the OS it runs on
+- [ ] **Tested builds on Windows and macOS:** so far only built and run on Linux
+- [ ] **Automated releases:** GitHub Actions builds for all three OSes and attaches them to a GitHub Release
+- [ ] **App icon and installer-style polish**
 
 ## Stretch goals
 - [ ] **Music:** background audio during the slideshow

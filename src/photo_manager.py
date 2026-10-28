@@ -22,26 +22,39 @@ def get_photo_caption(exif_date: Optional[datetime], cutoff_date: datetime) -> O
     return format_date_caption(exif_date)
 
 
-def _build_photo(path: Path, cutoff: datetime, folder: str = "") -> Optional[Dict]:
+def _build_photo(path: Path, cutoff: datetime, folder: str = "", cache: Optional[Dict] = None) -> Optional[Dict]:
+    """Photo record; `cache` maps path -> {sig, ratio, date} so unchanged files skip the EXIF/size read."""
+    key = str(path)
     try:
-        ratio = get_aspect_ratio(path)
-    except Exception as e:
-        log.warning("Skipping unreadable image %s: %s", path, e)
+        st = path.stat()
+        sig = [st.st_mtime_ns, st.st_size]
+    except OSError:
         return None
-    date = extract_exif_date(path)
+    hit = cache.get(key) if cache is not None else None
+    if hit and hit.get("sig") == sig:
+        ratio, date = hit["ratio"], datetime.fromisoformat(hit["date"]) if hit["date"] else None
+    else:
+        try:
+            ratio = get_aspect_ratio(path)
+        except Exception as e:
+            log.warning("Skipping unreadable image %s: %s", path, e)
+            return None
+        date = extract_exif_date(path)
+        if cache is not None:
+            cache[key] = {"sig": sig, "ratio": ratio, "date": date.isoformat() if date else None}
     return {
         "filename": path.name,
         "folder": folder,
-        "path": str(path),
+        "path": key,
         "exif_date": date.isoformat() if date else None,
         "caption_text": get_photo_caption(date, cutoff),
         "aspect_ratio": ratio,
     }
 
 
-def scan_folder(path, cutoff: datetime) -> Dict:
+def scan_folder(path, cutoff: datetime, cache: Optional[Dict] = None) -> Dict:
     """Scan one folder (non-recursive) into {name, path, photo_count, photos}."""
     path = Path(path)
     files = sorted(f for f in path.iterdir() if f.suffix.lower() in IMAGE_EXTS) if path.is_dir() else []
-    photos = [p for p in (_build_photo(f, cutoff, path.name) for f in files) if p]
+    photos = [p for p in (_build_photo(f, cutoff, path.name, cache) for f in files) if p]
     return {"name": path.name, "path": str(path), "photo_count": len(photos), "photos": photos}

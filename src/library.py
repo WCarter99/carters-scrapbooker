@@ -1,9 +1,12 @@
 """The user's photo sources, scanned on a background thread."""
+import json
 import logging
+import os
 import threading
 from pathlib import Path
 
 import config_manager as cm
+import paths
 import photo_manager as pm
 
 log = logging.getLogger("scrapbook")
@@ -16,6 +19,26 @@ class Library:
         self.progress = (0, 0)  # folders done, folders total
         self._lock = threading.Lock()
         self._thread = None
+        self.cache = self._load_cache()
+
+    @staticmethod
+    def _cache_file():
+        return paths.cache_dir() / "photo_index.json"
+
+    def _load_cache(self):
+        try:
+            data = json.loads(self._cache_file().read_text(encoding="utf-8"))
+            return data if isinstance(data, dict) else {}
+        except (OSError, json.JSONDecodeError):
+            return {}
+
+    def _save_cache(self):
+        tmp = self._cache_file().with_suffix(".tmp")
+        try:
+            tmp.write_text(json.dumps(self.cache), encoding="utf-8")
+            os.replace(tmp, self._cache_file())
+        except OSError as e:
+            log.warning("Could not save photo cache: %s", e)
 
     @property
     def scanning(self):
@@ -41,12 +64,13 @@ class Library:
                 path = todo[0]
                 self.progress = (done, done + len(todo))
             try:
-                folder = pm.scan_folder(path, cutoff)
+                folder = pm.scan_folder(path, cutoff, self.cache)
             except OSError as e:
                 log.warning("Could not scan %s: %s", path, e)
                 folder = None
             with self._lock:
                 self.scanned[path] = folder
+            self._save_cache()
             done += 1
 
     def rescan(self):

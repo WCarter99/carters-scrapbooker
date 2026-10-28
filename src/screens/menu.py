@@ -17,8 +17,8 @@ class MenuScreen(Screen):
     def build(self):
         mgr = self.app.manager
         w, h = self.app.screen.get_size()
-        cx, bw, bh, gap = w // 2, 360, 46, 10
-        y = max(20, h // 2 - 330)
+        cx, bw, bh, gap = w // 2, 360, 42, 8
+        y = max(10, h // 2 - 350)
         pygame_gui.elements.UILabel(pygame.Rect(cx - 300, y, 600, 50), "Carter's Scrapbooker", mgr,
                                     object_id="#title")
         y += 70
@@ -27,7 +27,7 @@ class MenuScreen(Screen):
         self.buttons = {}
         for key, label in (("random", "Play: Random All"), ("rotating", "Play: Rotating Folders"),
                            ("sources", "Photo Sources"), ("templates", "Templates"),
-                           ("settings", "Settings"), ("quit", "Quit")):
+                           ("designer", "Template Designer"), ("settings", "Settings"), ("quit", "Quit")):
             self.buttons[key] = pygame_gui.elements.UIButton(pygame.Rect(cx - bw // 2, y, bw, bh), label, mgr)
             y += bh + gap
         self.folder_box = pygame_gui.elements.UITextBox("", pygame.Rect(cx - 300, y + 5, 600, max(60, h - y - 15)), mgr)
@@ -66,6 +66,8 @@ class MenuScreen(Screen):
                 self.app.goto("sources")
             elif e.ui_element is self.buttons["templates"]:
                 self.app.goto("templates")
+            elif e.ui_element is self.buttons["designer"]:
+                self.app.goto("designer")
             elif e.ui_element is self.buttons["settings"]:
                 self.app.goto("settings")
             elif e.ui_element is self.buttons["quit"]:

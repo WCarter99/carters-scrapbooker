@@ -35,7 +35,7 @@ class SettingsScreen(Screen):
     def build(self):
         cfg, mgr = self.app.cfg, self.app.manager
         w, h = self.app.screen.get_size()
-        pygame_gui.elements.UILabel(pygame.Rect(20, 10, w - 40, 40), "Settings", mgr, object_id="#title")
+        pygame_gui.elements.UILabel(pygame.Rect(20, 8, w - 40, 46), "Settings", mgr, object_id="#title")
         x, cw = 30 + LABEL_W, min(420, w - LABEL_W - 80)
         rows = ["Seconds per photo", "Multi-photo frames", "Fullscreen slideshow", "Caption cutoff date",
                 "Caption font", "Caption text colour", "Caption background"]

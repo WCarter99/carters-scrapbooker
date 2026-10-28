@@ -13,7 +13,7 @@ def build_theme() -> dict:
                "normal_text": "#e8e8ee", "hovered_text": "#ffffff", "selected_text": "#ffffff",
                "disabled_text": "#77777f", "normal_border": "#555560", "hovered_border": "#8888a0",
                "text_cursor": "#ffffff", "filled_bar": "#4a6fa5", "unfilled_bar": "#2b2b33"}
-    theme = {"defaults": {"colours": colours}, "#title": {"font": font(30, True)}}
+    theme = {"defaults": {"colours": colours}, "#title": {"font": font(30, True)}, "#subtitle": {"font": font(20, True)}}
     for element in ("label", "button", "drop_down_menu", "selection_list", "text_entry_line", "text_box"):
         theme[element] = {"font": font(16)}
     return theme

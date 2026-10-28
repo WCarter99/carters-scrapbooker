@@ -21,7 +21,7 @@ class SourcesScreen(Screen):
     def build(self):
         mgr = self.app.manager
         w, h = self.app.screen.get_size()
-        pygame_gui.elements.UILabel(pygame.Rect(20, 15, w - 40, 40), "Photo Sources", mgr, object_id="#title")
+        pygame_gui.elements.UILabel(pygame.Rect(20, 12, w - 40, 46), "Photo Sources", mgr, object_id="#title")
         self.list = pygame_gui.elements.UISelectionList(pygame.Rect(20, 70, w - 40, h - 150), [], mgr)
         bw, y = (w - 60) // 4, h - 65
         self.buttons = {}
